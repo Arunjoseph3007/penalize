@@ -11,7 +11,7 @@ function exploreNode(
   pos: number,
   depth: number
 ): [string[], boolean] {
-  const lctx: string[] = [];
+  let lctx: string[] = [];
 
   const isHit = pos > node.start && pos < node.end;
 
@@ -31,10 +31,10 @@ function exploreNode(
       node.body.body.forEach((stmt) => {
         const [mctx, status] = exploreNode(stmt, lctx, pos, depth + 1);
 
-        lctx.push(`!(${mctx.join(" && ")})`)
+        lctx = lctx.concat(mctx);
       });
 
-      break;
+      return [[], isHit];
     }
     case "IfStatement": {
       logger("if");
@@ -81,12 +81,22 @@ function exploreNode(
 export function getContext(content: string, pos: number): string[] | null {
   const ast = acorn.parse(content, { ecmaVersion: "latest" });
   const len = ast.end;
+  console.log("len", len);
 
-  ast.body.forEach((node) => exploreNode(node, [], pos, 0));
+  let ctx: string[] = [];
 
-  return [];
+  ast.body.forEach((node) => {
+    const [mctx, hit] = exploreNode(node, [], pos, 0);
+    if (hit) {
+      return ctx;
+    } else {
+      ctx = ctx.concat(mctx);
+    }
+  });
+
+  return null;
 }
 
-const ctx = getContext(content, 100);
+const ctx = getContext(content, content.indexOf("more"));
 
 console.log(ctx);
