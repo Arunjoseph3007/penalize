@@ -1,0 +1,17 @@
+{
+  "name": "penalize",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "dev": "npm run --silent build && node dist/index.js"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.29",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "acorn": "^8.14.1"
+  }
+}
